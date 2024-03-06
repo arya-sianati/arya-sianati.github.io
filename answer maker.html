@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
+</head>
+<style>
+    #main{
+        margin: 0;
+        border: 0;
+        padding: 0;
+        text-align: center;
+
+    }
+    h3, label{
+        margin: 0;
+        padding: 0;
+    }
+    .soal-group{
+        width: 100%;
+        text-align: center;
+    }
+    .soal, .but{
+        width: 30%;
+    }
+
+@media only screen and (max-width: 1072px) {
+    .soal-group{
+        width: 100%;
+        text-align: center;
+    }
+    .soal, .but{
+        width: 80%;
+        height: 5%;
+    }
+
+}
+
+
+</style>
+<body>
+
+    <div id="main">
+        <div class="mt-5 mb-5">
+            <h1>Test Answers Organizer</h1>
+        </div>
+        <div id="kol-soal">
+
+
+        </div>
+        <div>
+            <input type="button" onclick="add()" class="btn btn-primary but mb-5 p-3" id="add" value="Add new answers box">
+        </div>
+        <div>
+            <input type="button" onclick="copy()" class="btn btn-success but p-3" id="copy" value="Copy answers">
+        </div>
+    </div>
+
+
+</body>
+<script>
+    list = {}
+
+
+    function add(){
+
+
+        var abc = document.getElementsByTagName("input")
+        for (i of abc){
+            if (i.checked === true){
+                myArray = i.id.split("s")[1].split("g")
+                list[myArray[0]] = myArray[1]
+            }
+        }
+
+        var elid = ""
+        for (i in Object.keys(list).length){
+            elid = "s"+i+"g"+list[i]
+            console.log(elid)
+        }
+
+        var a = Object.keys(list).length
+        list[a+1] = '5'
+        list[a+2] = '5'
+        list[a+3] = '5'
+        list[a+4] = '5'
+        list[a+5] = '5'
+        var a1 = a+1
+        var a2 = a+2
+        var a3 = a+3
+        var a4 = a+4
+        var a5 = a+5
+
+
+        var ks = document.getElementById("kol-soal").innerHTML
+        ks += "<div class=\"soal-group mb-5\">\n" +
+            "                <div class=\"container soal mb-2\">\n" +
+            "                    <div id=\"s"+ a1 +"\" class=\"row rounded border border-2\">\n" +
+            "                        <div class=\"col-2 p-2\">\n" +
+            "                            <h3 class=\"position-absolute top-50 start-50 translate-middle\">"+ a1 +"</h3>\n" +
+            "                        </div>\n" +
+            "                        <div class=\"col-10 p-2 \">\n" +
+            "                            <div class=\"col\">\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a1 +"\" id=\"s"+ a1 +"g1\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a1 +"g1\">1</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a1 +"\" id=\"s"+ a1 +"g2\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a1 +"g2\">2</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a1 +"\" id=\"s"+ a1 +"g3\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a1 +"g3\">3</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a1 +"\" id=\"s"+ a1 +"g4\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a1 +"g4\">4</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a1 +"\" id=\"s"+ a1 +"g5\" checked autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-danger\" for=\"s"+ a1 +"g5\">X</label>\n" +
+            "                            </div>\n" +
+            "                        </div>\n" +
+            "                    </div>\n" +
+            "                </div>\n" +
+            "                <div class=\"container soal mb-2\">\n" +
+            "                    <div id=\"s"+ a2 +"\" class=\"row rounded border border-2\">\n" +
+            "                        <div class=\"col-2 p-2\">\n" +
+            "                            <h3 class=\"position-absolute top-50 start-50 translate-middle\">"+ a2 +"</h3>\n" +
+            "                        </div>\n" +
+            "                        <div class=\"col-10 p-2 \">\n" +
+            "                            <div class=\"col\">\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a2 +"\" id=\"s"+ a2 +"g1\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a2 +"g1\">1</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a2 +"\" id=\"s"+ a2 +"g2\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a2 +"g2\">2</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a2 +"\" id=\"s"+ a2 +"g3\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a2 +"g3\">3</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a2 +"\" id=\"s"+ a2 +"g4\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a2 +"g4\">4</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a2 +"\" id=\"s"+ a2 +"g5\" checked autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-danger\" for=\"s"+ a2 +"g5\">X</label>\n" +
+            "                            </div>\n" +
+            "                        </div>\n" +
+            "                    </div>\n" +
+            "                </div>\n" +
+            "                <div class=\"container soal mb-2\">\n" +
+            "                    <div id=\"s"+ a3 +"\" class=\"row rounded border border-2\">\n" +
+            "                        <div class=\"col-2 p-2\">\n" +
+            "                            <h3 class=\"position-absolute top-50 start-50 translate-middle\">"+ a3 +"</h3>\n" +
+            "                        </div>\n" +
+            "                        <div class=\"col-10 p-2 \">\n" +
+            "                            <div class=\"col\">\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a3 +"\" id=\"s"+ a3 +"g1\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a3 +"g1\">1</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a3 +"\" id=\"s"+ a3 +"g2\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a3 +"g2\">2</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a3 +"\" id=\"s"+ a3 +"g3\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a3 +"g3\">3</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a3 +"\" id=\"s"+ a3 +"g4\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a3 +"g4\">4</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a3 +"\" id=\"s"+ a3 +"g5\" checked autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-danger\" for=\"s"+ a3 +"g5\">X</label>\n" +
+            "                            </div>\n" +
+            "                        </div>\n" +
+            "                    </div>\n" +
+            "                </div>\n" +
+            "                <div class=\"container soal mb-2\">\n" +
+            "                    <div id=\"s"+ a4 +"\" class=\"row rounded border border-2\">\n" +
+            "                        <div class=\"col-2 p-2\">\n" +
+            "                            <h3 class=\"position-absolute top-50 start-50 translate-middle\">"+ a4 +"</h3>\n" +
+            "                        </div>\n" +
+            "                        <div class=\"col-10 p-2 \">\n" +
+            "                            <div class=\"col\">\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a4 +"\" id=\"s"+ a4 +"g1\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a4 +"g1\">1</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a4 +"\" id=\"s"+ a4 +"g2\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a4 +"g2\">2</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a4 +"\" id=\"s"+ a4 +"g3\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a4 +"g3\">3</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a4 +"\" id=\"s"+ a4 +"g4\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a4 +"g4\">4</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a4 +"\" id=\"s"+ a4 +"g5\" checked autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-danger\" for=\"s"+ a4 +"g5\">X</label>\n" +
+            "                            </div>\n" +
+            "                        </div>\n" +
+            "                    </div>\n" +
+            "                </div>\n" +
+            "                <div class=\"container soal mb-2\">\n" +
+            "                    <div id=\"s"+ a5 +"\" class=\"row rounded border border-2\">\n" +
+            "                        <div class=\"col-2 p-2\">\n" +
+            "                            <h3 class=\"position-absolute top-50 start-50 translate-middle\">"+ a5 +"</h3>\n" +
+            "                        </div>\n" +
+            "                        <div class=\"col-10 p-2 \">\n" +
+            "                            <div class=\"col\">\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a5 +"\" id=\"s"+ a5 +"g1\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a5 +"g1\">1</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a5 +"\" id=\"s"+ a5 +"g2\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a5 +"g2\">2</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a5 +"\" id=\"s"+ a5 +"g3\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a5 +"g3\">3</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a5 +"\" id=\"s"+ a5 +"g4\" autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-success\" for=\"s"+ a5 +"g4\">4</label>\n" +
+            "                                <input type=\"radio\" class=\"btn-check gozineh\" name=\"s"+ a5 +"\" id=\"s"+ a5 +"g5\" checked autocomplete=\"off\">\n" +
+            "                                <label class=\"btn btn-outline-danger\" for=\"s"+ a5 +"g5\">X</label>\n" +
+            "                            </div>\n" +
+            "                        </div>\n" +
+            "                    </div>\n" +
+            "                </div>\n" +
+            "            </div>"
+
+
+
+        console.log(list)
+
+        document.getElementById("kol-soal").innerHTML = ks
+
+
+        for (i in list){
+            elid = "s"+i+"g"+list[i]
+            console.log(elid)
+            // console.log(list)
+            document.getElementById(elid).checked = true
+        }
+
+
+    }
+
+
+
+
+    // function click(s, g){
+    //     list[s] = g
+    //     console.log(list)
+    // }
+
+
+
+
+
+
+    function copy() {
+
+
+        var abc = document.getElementsByTagName("input")
+        for (i of abc){
+            if (i.checked === true){
+                myArray = i.id.split("s")[1].split("g")
+                list[myArray[0]] = myArray[1]
+            }
+        }
+
+
+        var copytext = ""
+        for (i in list) {
+            copytext += String(i) + " - " + list[i] + "\n"
+        }
+
+        navigator.clipboard.writeText(copytext);
+        console.log(copytext)
+    }
+
+</script>
+</html>
