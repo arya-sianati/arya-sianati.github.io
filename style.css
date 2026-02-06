@@ -4,7 +4,7 @@ body {
     padding: 0;
     overflow: hidden;
 }
-h1, .navbar-brand {
+h1, h3, .navbar-brand {
     font-family: 'Rowdies Light', sans-serif;
 }
 .navbar {
@@ -20,22 +20,45 @@ h1, .navbar-brand {
 #map {
     height: calc(100vh - 56px); /* Adjust for navbar height */
 }
-#credits {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    border-radius: 5px;
-    z-index: 1000;
-}
-#login {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.login-bg {
     height: 100vh;
-    background-color: #f8f9fa;
+    background: linear-gradient(135deg, #6c3bf2, #feffc5);
+    animation: gradient-move 10s ease infinite;
+    background-size: 200% 200%;
 }
-#login .card {
-    width: 400px;
+@keyframes gradient-move {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.login-card {
+    max-width: 400px;
+    width: 100%;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.95);
+}
+.profile-btn {
+    background-color: #feffc5 !important;
+    color: #6c3bf2 !important;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    font-size: 20px;
+}
+.profile-btn::after {
+    display: none !important; /* Remove the ::after caret */
+}
+.dropdown-menu {
+    background-color: #feffc5;
+    color: #6c3bf2;
+}
+@media (max-width: 576px) {
+    .login-card {
+        padding: 1rem;
+    }
+    .card-body {
+        padding: 2rem !important;
+    }
 }

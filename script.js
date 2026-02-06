@@ -1,18 +1,34 @@
 const loginDiv = document.getElementById('login');
 const mainDiv = document.getElementById('main');
 const usernameSpan = document.getElementById('username');
-const creditsSpan = document.getElementById('credits-amount');
+const balanceSpan = document.getElementById('balance-amount');
 const loginForm = document.getElementById('login-form');
+const signupBtn = document.getElementById('signup-btn');
+const reserveModal = new bootstrap.Modal(document.getElementById('reserveModal'));
+const hoursInput = document.getElementById('hours-input');
+const hourlyPriceSpan = document.getElementById('hourly-price');
+const totalPriceSpan = document.getElementById('total-price');
+const streetNameP = document.getElementById('street-name');
+const confirmPayBtn = document.getElementById('confirm-pay-btn');
+const alertContainer = document.getElementById('alert-container');
+
+let currentStreetData = null;
+let currentHourlyPrice = 0;
+
+// Handle signup mock
+signupBtn.addEventListener('click', () => {
+    alert('Sign up not implemented in this demo.');
+});
 
 // Check if logged in
 if (localStorage.getItem('username')) {
     loginDiv.style.display = 'none';
     mainDiv.style.display = 'block';
     usernameSpan.textContent = localStorage.getItem('username');
-    if (!localStorage.getItem('credits')) {
-        localStorage.setItem('credits', '30.00');
+    if (!localStorage.getItem('balance')) {
+        localStorage.setItem('balance', '10.00');
     }
-    creditsSpan.textContent = localStorage.getItem('credits');
+    balanceSpan.textContent = localStorage.getItem('balance');
     initMap();
 }
 
@@ -22,17 +38,33 @@ loginForm.addEventListener('submit', (e) => {
     const username = document.getElementById('username-input').value;
     if (username) {
         localStorage.setItem('username', username);
-        localStorage.setItem('credits', '30.00');
+        localStorage.setItem('balance', '10.00');
         location.reload(); // Reload to show map
     }
 });
 
+function showAlert(message, type = 'success') {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.role = 'alert';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    alertContainer.appendChild(alertDiv);
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+        }
+    }, 5000);
+}
+
 function initMap() {
-    const map = L.map('map').setView([45.5231, -122.6765], 12); // Center on Portland
+    const map = L.map('map').setView([45.5231, -122.6765], 13); // Center on Portland downtown
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19, // Allows a lot of zooming
+        maxZoom: 19,
     }).addTo(map);
 
     // Geolocation
@@ -58,77 +90,129 @@ function initMap() {
         );
     }
 
-    // Generate random parking spots within Portland metro bounds
-    const minLat = 45.3;
-    const maxLat = 45.7;
-    const minLng = -123.0;
-    const maxLng = -122.3;
-    const numSpots = 500; // Adjust as needed; more for density
-    const spots = [];
-    const markers = [];
+    const markersLayer = L.layerGroup().addTo(map); // Group for markers
 
-    for (let i = 0; i < numSpots; i++) {
-        const lat = minLat + Math.random() * (maxLat - minLat);
-        const lng = minLng + Math.random() * (maxLng - minLng);
-        const available = Math.random() > 0.3; // 70% available
-        spots.push({ lat, lng, available });
-    }
+    // Fetch streets from Overpass API (approximating the ZIP areas with a bound covering them)
+    const bbox = '45.48,-122.71,45.54,-122.65'; // Combined bound for the ZIPs
+    const overpassUrl = `https://overpass-api.de/api/interpreter?data=[out:json];(way["highway"~"residential|secondary|tertiary"](${bbox}););out center;`;
 
-    // Add markers
-    spots.forEach((spot, index) => {
-        const color = spot.available ? 'green' : 'red';
-        const marker = L.circleMarker([spot.lat, spot.lng], {
-            color: color,
-            fillColor: color,
-            fillOpacity: 0.8,
-            radius: 6
-        }).addTo(map);
+    fetch(overpassUrl)
+        .then(response => response.json())
+        .then(data => {
+            const streets = data.elements.filter(el => el.type === 'way' && el.center);
+            const streetData = {}; // To store per-street data
 
-        marker.on('click', () => {
-            if (!spot.available) {
-                marker.bindPopup('<b>Spot Full</b>').openPopup();
-                return;
+            streets.forEach((street, index) => {
+                let name = street.tags.name || `Street ${index + 1}`;
+                let key = name; // Use name as base key
+                let counter = 1;
+                while (streetData[key]) { // If duplicate name, append unique suffix
+                    key = `${name} (${counter})`;
+                    counter++;
+                }
+                const totalSpots = Math.floor(Math.random() * 6) + 5; // 5-10 static
+                let available = Math.floor(Math.random() * (totalSpots + 1)); // Initial random 0-total
+                streetData[key] = { total: totalSpots, available, lat: street.center.lat, lon: street.center.lon, displayName: name };
+
+                const marker = L.circleMarker([street.center.lat, street.center.lon], {
+                    color: '#6c3bf2',
+                    fillColor: '#feffc5',
+                    fillOpacity: 0.8,
+                    radius: 8
+                });
+
+                marker.on('click', () => {
+                    const occupied = streetData[key].total - streetData[key].available;
+                    const hourlyPrice = (1 + Math.random() * 4).toFixed(2);
+                    const popupContent = `
+                        <b>${streetData[key].displayName}</b><br>
+                        Available: ${streetData[key].available}<br>
+                        Occupied: ${occupied}<br>
+                        Total: ${streetData[key].total}<br>
+                        Price: $${hourlyPrice} / hour<br>
+                        <button class="btn btn-sm btn-primary mt-2" id="reserve-btn-${index}" style="background-color: #6c3bf2; border-color: #6c3bf2;">Reserve Spot</button>
+                    `;
+                    marker.bindPopup(popupContent).openPopup();
+
+                    setTimeout(() => {
+                        const reserveBtn = document.getElementById(`reserve-btn-${index}`);
+                        if (reserveBtn) {
+                            reserveBtn.addEventListener('click', () => {
+                                if (streetData[key].available > 0) {
+                                    currentStreetData = streetData[key];
+                                    currentStreetData.name = streetData[key].displayName;
+                                    currentHourlyPrice = parseFloat(hourlyPrice);
+                                    streetNameP.textContent = `Street: ${streetData[key].displayName}`;
+                                    hourlyPriceSpan.textContent = currentHourlyPrice.toFixed(2);
+                                    totalPriceSpan.textContent = currentHourlyPrice.toFixed(2);
+                                    hoursInput.value = 1;
+                                    reserveModal.show();
+                                    marker.closePopup();
+                                } else {
+                                    showAlert('No available spots!', 'danger');
+                                }
+                            });
+                        }
+                    }, 100);
+                });
+
+                streetData[key].marker = marker;
+            });
+
+            // Add markers to layer
+            Object.values(streetData).forEach(sd => markersLayer.addLayer(sd.marker));
+
+            // Zoom listener
+            map.on('zoomend', () => {
+                const zoom = map.getZoom();
+                if (zoom >= 15) {
+                    if (!map.hasLayer(markersLayer)) {
+                        map.addLayer(markersLayer);
+                    }
+                } else {
+                    if (map.hasLayer(markersLayer)) {
+                        map.removeLayer(markersLayer);
+                    }
+                }
+            });
+
+            // Initial check
+            if (map.getZoom() < 15) {
+                map.removeLayer(markersLayer);
             }
 
-            // Calculate crowdedness and price
-            const nearby = spots.filter(s => {
-                const dist = Math.sqrt(Math.pow(s.lat - spot.lat, 2) + Math.pow(s.lng - spot.lng, 2));
-                return dist < 0.01; // Approx 1km radius
-            });
-            const fullCount = nearby.filter(s => !s.available).length;
-            const crowdedRatio = nearby.length > 0 ? fullCount / nearby.length : 0;
-            const price = (1 + 4 * crowdedRatio).toFixed(2); // Price from $1 to $5
-
-            // Popup with pay button
-            const popupContent = `
-                <b>Parking Spot</b><br>
-                Area Pricing: $${price} / hour<br>
-                <button class="btn btn-sm btn-primary mt-2" id="pay-btn-${index}" style="background-color: #6c3bf2; border-color: #6c3bf2;">Pay with Credits</button>
-            `;
-            marker.bindPopup(popupContent).openPopup();
-
-            // Add event listener to pay button (use timeout to ensure DOM insertion)
-            setTimeout(() => {
-                const payBtn = document.getElementById(`pay-btn-${index}`);
-                if (payBtn) {
-                    payBtn.addEventListener('click', () => {
-                        let credits = parseFloat(localStorage.getItem('credits'));
-                        if (credits >= parseFloat(price)) {
-                            credits -= parseFloat(price);
-                            localStorage.setItem('credits', credits.toFixed(2));
-                            creditsSpan.textContent = credits.toFixed(2);
-                            alert('Payment successful! Spot reserved.');
-                            spot.available = false;
-                            marker.setStyle({ color: 'red', fillColor: 'red' });
-                            marker.closePopup();
-                        } else {
-                            alert('Insufficient credits!');
-                        }
-                    });
-                }
-            }, 100);
-        });
-
-        markers.push(marker);
-    });
+            // Dynamic updates every 10-15s
+            setInterval(() => {
+                Object.keys(streetData).forEach(key => {
+                    const change = Math.random() < 0.5 ? -1 : 1;
+                    streetData[key].available = Math.max(0, Math.min(streetData[key].total, streetData[key].available + change));
+                });
+                // Note: Popups won't auto-update; user needs to re-click
+            }, Math.floor(Math.random() * 5000) + 10000); // 10-15s random
+        })
+        .catch(error => console.error('Overpass error:', error));
 }
+
+// Handle hours input change
+hoursInput.addEventListener('input', () => {
+    const hours = parseInt(hoursInput.value) || 1;
+    const total = (hours * currentHourlyPrice).toFixed(2);
+    totalPriceSpan.textContent = total;
+});
+
+// Handle confirm pay
+confirmPayBtn.addEventListener('click', () => {
+    const hours = parseInt(hoursInput.value) || 1;
+    const totalPrice = hours * currentHourlyPrice;
+    let balance = parseFloat(localStorage.getItem('balance'));
+    if (balance >= totalPrice) {
+        balance -= totalPrice;
+        localStorage.setItem('balance', balance.toFixed(2));
+        balanceSpan.textContent = balance.toFixed(2);
+        currentStreetData.available--;
+        reserveModal.hide();
+        showAlert('Reservation successful! Spot reserved for ' + hours + ' hours.', 'success');
+    } else {
+        showAlert('Insufficient balance!', 'danger');
+    }
+});

@@ -11,19 +11,22 @@
 </head>
 <body>
 
-<div id="login">
-    <div class="card shadow">
-        <div class="card-body">
-            <h3 class="card-title text-center mb-4">Login to MySpot</h3>
-            <form id="login-form">
-                <div class="mb-3">
-                    <input type="text" class="form-control" id="username-input" placeholder="Username" required>
-                </div>
-                <div class="mb-3">
-                    <input type="password" class="form-control" id="password-input" placeholder="Password" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100" style="background-color: #6c3bf2; border-color: #6c3bf2;">Login</button>
-            </form>
+<div id="login" class="login-bg">
+    <div class="container h-100 d-flex align-items-center justify-content-center">
+        <div class="card shadow-lg login-card">
+            <div class="card-body p-5">
+                <h3 class="card-title text-center mb-4">Login to MySpot</h3>
+                <form id="login-form">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="username-input" placeholder="Username" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="password-input" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-2" style="background-color: #6c3bf2; border-color: #6c3bf2;">Login</button>
+                    <button type="button" id="signup-btn" class="btn btn-secondary w-100 btn-sm">Sign Up</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -31,15 +34,49 @@
 <div id="main" style="display: none;">
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">myspot</a> <!-- Logo as text; replace with <img> if you upload a logo.png -->
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <img src="./assets/logo.jpg" alt="myspot logo" class="me-2" style="height: 40px;">
+                myspot
+            </a>
             <div class="ms-auto">
-                <span class="navbar-text">Welcome, <span id="username"></span></span>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle profile-btn" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        👤
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><span class="dropdown-item-text">Username: <span id="username"></span></span></li>
+                        <li><span class="dropdown-item-text">Balance: $<span id="balance-amount">10.00</span></span></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
     <div id="map"></div>
-    <div id="credits" class="shadow-sm">
-        Credits: $<span id="credits-amount">30</span>
+    <div id="alert-container" class="position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 1050; width: 80%; max-width: 400px;"></div>
+</div>
+
+<!-- Reserve Modal -->
+<div class="modal fade" id="reserveModal" tabindex="-1" aria-labelledby="reserveModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reserveModalLabel">Reserve Parking Spot</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="street-name"></p>
+                <div class="mb-3">
+                    <label for="hours-input" class="form-label">How many hours?</label>
+                    <input type="number" class="form-control" id="hours-input" min="1" max="8" value="1" required>
+                </div>
+                <p>Hourly Price: $<span id="hourly-price"></span></p>
+                <p>Total Price: $<span id="total-price">0.00</span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirm-pay-btn" class="btn btn-primary" style="background-color: #6c3bf2; border-color: #6c3bf2;">Reserve and Pay</button>
+            </div>
+        </div>
     </div>
 </div>
 
