@@ -10,6 +10,7 @@ const hourlyPriceSpan = document.getElementById('hourly-price');
 const totalPriceSpan = document.getElementById('total-price');
 const streetNameP = document.getElementById('street-name');
 const confirmPayBtn = document.getElementById('confirm-pay-btn');
+const modalAlert = document.getElementById('modal-alert');
 const alertContainer = document.getElementById('alert-container');
 
 let currentStreetData = null;
@@ -146,6 +147,7 @@ function initMap() {
                                     hourlyPriceSpan.textContent = currentHourlyPrice.toFixed(2);
                                     totalPriceSpan.textContent = currentHourlyPrice.toFixed(2);
                                     hoursInput.value = 1;
+                                    modalAlert.classList.add('d-none');
                                     reserveModal.show();
                                     marker.closePopup();
                                 } else {
@@ -195,14 +197,29 @@ function initMap() {
 
 // Handle hours input change
 hoursInput.addEventListener('input', () => {
-    const hours = parseInt(hoursInput.value) || 1;
+    let hours = parseInt(hoursInput.value) || 1;
+    if (hours > 4) {
+        hours = 4;
+        hoursInput.value = 4;
+    }
     const total = (hours * currentHourlyPrice).toFixed(2);
     totalPriceSpan.textContent = total;
+    const balance = parseFloat(localStorage.getItem('balance'));
+    if (balance >= parseFloat(total)) {
+        modalAlert.classList.add('d-none');
+    } else {
+        modalAlert.textContent = 'Insufficient balance!';
+        modalAlert.classList.remove('d-none');
+    }
 });
 
 // Handle confirm pay
 confirmPayBtn.addEventListener('click', () => {
-    const hours = parseInt(hoursInput.value) || 1;
+    let hours = parseInt(hoursInput.value) || 1;
+    if (hours > 4) {
+        hours = 4;
+        hoursInput.value = 4;
+    }
     const totalPrice = hours * currentHourlyPrice;
     let balance = parseFloat(localStorage.getItem('balance'));
     if (balance >= totalPrice) {
@@ -213,6 +230,7 @@ confirmPayBtn.addEventListener('click', () => {
         reserveModal.hide();
         showAlert('Reservation successful! Spot reserved for ' + hours + ' hours.', 'success');
     } else {
-        showAlert('Insufficient balance!', 'danger');
+        modalAlert.textContent = 'Insufficient balance!';
+        modalAlert.classList.remove('d-none');
     }
 });

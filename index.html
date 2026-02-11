@@ -66,11 +66,12 @@
             <div class="modal-body">
                 <p id="street-name"></p>
                 <div class="mb-3">
-                    <label for="hours-input" class="form-label">How many hours?</label>
-                    <input type="number" class="form-control" id="hours-input" min="1" max="8" value="1" required>
+                    <label for="hours-input" class="form-label">How many hours? (Max 4)</label>
+                    <input type="number" class="form-control" id="hours-input" min="1" max="4" value="1" required>
                 </div>
                 <p>Hourly Price: $<span id="hourly-price"></span></p>
                 <p>Total Price: $<span id="total-price">0.00</span></p>
+                <div id="modal-alert" class="alert alert-danger d-none" role="alert"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
